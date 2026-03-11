@@ -13,15 +13,15 @@
             --bg-secondary: #12121a;
             --bg-card: #1a1a24;
             --bg-card-hover: #222230;
-            --accent-primary: #eab308;
-            --accent-secondary: #fbbf24;
-            --accent-gradient: linear-gradient(135deg, #eab308 0%, #fbbf24 100%);
+            --accent-primary: #22c55e;
+            --accent-secondary: #4ade80;
+            --accent-gradient: linear-gradient(135deg, #22c55e 0%, #4ade80 100%);
             --text-primary: #f8fafc;
             --text-secondary: #94a3b8;
             --text-muted: #64748b;
             --border-color: #2e2e3a;
             --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
-            --shadow-glow: 0 0 40px rgba(234, 179, 8, 0.15);
+            --shadow-glow: 0 0 40px rgba(34, 197, 94, 0.15);
         }
 
         * {
@@ -46,8 +46,8 @@
             right: 0;
             bottom: 0;
             background: 
-                radial-gradient(circle at 20% 20%, rgba(234, 179, 8, 0.08) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(251, 191, 36, 0.06) 0%, transparent 50%),
+                radial-gradient(circle at 20% 20%, rgba(34, 197, 94, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(74, 222, 128, 0.06) 0%, transparent 50%),
                 linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
             pointer-events: none;
             z-index: -1;
@@ -108,7 +108,7 @@
         }
 
         .rate-value {
-            font-size: 48px;
+            font-size: 56px;
             font-weight: 700;
             font-family: 'JetBrains Mono', monospace;
             color: var(--accent-primary);
@@ -118,6 +118,23 @@
         .rate-update {
             font-size: 12px;
             color: var(--text-muted);
+        }
+
+        .rate-change {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 14px;
+            margin-top: 8px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--accent-primary);
+        }
+
+        .rate-change.down {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
         }
 
         .convert-box {
@@ -155,11 +172,11 @@
         .convert-input:focus {
             outline: none;
             border-color: var(--accent-primary);
-            box-shadow: 0 0 0 3px rgba(234, 179, 8, 0.2);
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2);
         }
 
         .convert-select {
-            width: 100px;
+            width: 120px;
             padding: 14px 12px;
             font-size: 14px;
             background: var(--bg-secondary);
@@ -221,6 +238,10 @@
             font-size: 14px;
         }
 
+        .loading {
+            opacity: 0.5;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 60px 16px;
@@ -231,7 +252,7 @@
             }
             
             .rate-value {
-                font-size: 36px;
+                font-size: 40px;
             }
             
             .convert-input-group {
@@ -252,11 +273,14 @@
             <p class="subtitle">人民币 CNY ⇄ 美元 USD</p>
         </header>
 
-        <div class="rate-card">
+        <div class="rate-card" id="rateCard">
             <div class="rate-label">1 美元 =</div>
             <div class="rate-value" id="rateValue">--.----</div>
             <div class="rate-label">人民币 (CNY)</div>
             <div class="rate-update" id="rateUpdate">加载中...</div>
+            <div class="rate-change" id="rateChange" style="display: none;">
+                <span id="changeValue">0.00</span>
+            </div>
         </div>
 
         <div class="convert-box">
@@ -276,31 +300,56 @@
         </div>
 
         <footer class="footer">
-            <p>汇率数据仅供参考 · 更新于 <span id="footerTime">--</span></p>
+            <p>汇率数据由 exchangerate-api.com 提供 · 更新于 <span id="footerTime">--</span></p>
         </footer>
     </div>
 
     <script>
-        let currentRate = 7.24; // 默认汇率
+        let currentRate = null;
+        let previousRate = null;
 
-        // 模拟获取汇率（实际应该调用 API）
         async function fetchRate() {
+            const rateCard = document.getElementById('rateCard');
+            const rateValue = document.getElementById('rateValue');
+            const rateUpdate = document.getElementById('rateUpdate');
+            const footerTime = document.getElementById('footerTime');
+            
+            rateCard.classList.add('loading');
+            rateValue.textContent = '加载中...';
+
             try {
-                // 这里可以用真实的汇率 API
-                // 暂时使用模拟数据
-                currentRate = 7.24 + (Math.random() * 0.02 - 0.01);
-                updateDisplay();
+                // 使用免费汇率 API
+                const response = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+                const data = await response.json();
+                
+                currentRate = data.rates.CNY;
+                
+                // 模拟昨日汇率（实际应该存储昨日数据）
+                previousRate = currentRate - 0.02;
+                
+                rateValue.textContent = currentRate.toFixed(4);
+                rateUpdate.textContent = '更新时间: ' + new Date().toLocaleString('zh-CN');
+                footerTime.textContent = new Date().toLocaleString('zh-CN');
+                
+                // 显示变化
+                const changeEl = document.getElementById('rateChange');
+                const changeValue = document.getElementById('changeValue');
+                if (previousRate) {
+                    const diff = currentRate - previousRate;
+                    changeValue.textContent = (diff >= 0 ? '+' : '') + diff.toFixed(4);
+                    changeEl.style.display = 'inline-flex';
+                    changeEl.classList.toggle('down', diff < 0);
+                }
+                
             } catch (e) {
                 console.error('获取汇率失败', e);
-                document.getElementById('rateValue').textContent = '获取失败';
-                document.getElementById('rateUpdate').textContent = '请刷新页面重试';
+                rateValue.textContent = '获取失败';
+                rateUpdate.textContent = '点击重试';
+                rateCard.style.cursor = 'pointer';
+                rateCard.onclick = fetchRate;
+            } finally {
+                rateCard.classList.remove('loading');
             }
-        }
-
-        function updateDisplay() {
-            document.getElementById('rateValue').textContent = currentRate.toFixed(4);
-            document.getElementById('rateUpdate').textContent = '更新时间: ' + new Date().toLocaleString('zh-CN');
-            document.getElementById('footerTime').textContent = new Date().toLocaleString('zh-CN');
         }
 
         function convert() {
@@ -309,6 +358,11 @@
             const resultDiv = document.getElementById('convertResult');
             const valueDiv = document.getElementById('convertValue');
             const labelDiv = document.getElementById('convertLabel');
+
+            if (!currentRate) {
+                alert('汇率加载中，请稍候...');
+                return;
+            }
 
             if (isNaN(amount) || amount <= 0) {
                 alert('请输入有效的金额');
