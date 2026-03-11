@@ -3,25 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>灰绿查询</title>
+    <title>汇率查询 - CNY/USD</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-primary: #0a0a0f;
             --bg-secondary: #12121a;
             --bg-card: #1a1a24;
             --bg-card-hover: #222230;
-            --accent-primary: #6b8e6b;
-            --accent-secondary: #8fbc8f;
-            --accent-gradient: linear-gradient(135deg, #6b8e6b 0%, #8fbc8f 100%);
+            --accent-primary: #eab308;
+            --accent-secondary: #fbbf24;
+            --accent-gradient: linear-gradient(135deg, #eab308 0%, #fbbf24 100%);
             --text-primary: #f8fafc;
             --text-secondary: #94a3b8;
             --text-muted: #64748b;
             --border-color: #2e2e3a;
             --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
-            --shadow-glow: 0 0 40px rgba(107, 142, 107, 0.15);
+            --shadow-glow: 0 0 40px rgba(234, 179, 8, 0.15);
         }
 
         * {
@@ -46,15 +46,15 @@
             right: 0;
             bottom: 0;
             background: 
-                radial-gradient(circle at 20% 20%, rgba(107, 142, 107, 0.08) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(143, 188, 143, 0.06) 0%, transparent 50%),
+                radial-gradient(circle at 20% 20%, rgba(234, 179, 8, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(251, 191, 36, 0.06) 0%, transparent 50%),
                 linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
             pointer-events: none;
             z-index: -1;
         }
 
         .container {
-            max-width: 800px;
+            max-width: 600px;
             margin: 0 auto;
             padding: 80px 24px;
         }
@@ -92,115 +92,126 @@
             color: var(--text-secondary);
         }
 
-        .search-box {
+        .rate-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 32px;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .rate-label {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .rate-value {
+            font-size: 48px;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent-primary);
+            margin-bottom: 8px;
+        }
+
+        .rate-update {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .convert-box {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 16px;
             padding: 24px;
-            margin-bottom: 32px;
         }
 
-        .search-input {
-            width: 100%;
-            padding: 16px 20px;
+        .convert-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .convert-input-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .convert-input {
+            flex: 1;
+            padding: 14px 16px;
             font-size: 16px;
             background: var(--bg-secondary);
             border: 1px solid var(--border-color);
             border-radius: 12px;
             color: var(--text-primary);
-            font-family: 'Inter', sans-serif;
+            font-family: 'JetBrains Mono', monospace;
             transition: all 0.3s ease;
         }
 
-        .search-input:focus {
+        .convert-input:focus {
             outline: none;
             border-color: var(--accent-primary);
-            box-shadow: 0 0 0 3px rgba(107, 142, 107, 0.2);
+            box-shadow: 0 0 0 3px rgba(234, 179, 8, 0.2);
         }
 
-        .search-input::placeholder {
-            color: var(--text-muted);
+        .convert-select {
+            width: 100px;
+            padding: 14px 12px;
+            font-size: 14px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            cursor: pointer;
         }
 
-        .search-btn {
+        .convert-btn {
             width: 100%;
             padding: 16px;
-            margin-top: 16px;
             font-size: 16px;
             font-weight: 600;
             background: var(--accent-gradient);
             border: none;
             border-radius: 12px;
-            color: white;
+            color: #000;
             cursor: pointer;
             font-family: 'Inter', sans-serif;
             transition: all 0.3s ease;
         }
 
-        .search-btn:hover {
+        .convert-btn:hover {
             transform: translateY(-2px);
             box-shadow: var(--shadow-glow);
         }
 
-        .result-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 24px;
+        .convert-result {
+            margin-top: 20px;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            text-align: center;
             display: none;
         }
 
-        .result-card.show {
+        .convert-result.show {
             display: block;
         }
 
-        .result-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 16px;
+        .convert-result-value {
+            font-size: 28px;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
             color: var(--accent-primary);
         }
 
-        .result-content {
-            font-size: 14px;
-            color: var(--text-secondary);
-            line-height: 1.8;
-        }
-
-        .color-preview {
-            width: 100%;
-            height: 120px;
-            border-radius: 12px;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            font-weight: 600;
-        }
-
-        .color-info {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-        }
-
-        .color-item {
-            background: var(--bg-secondary);
-            padding: 12px;
-            border-radius: 8px;
-        }
-
-        .color-label {
+        .convert-result-label {
             font-size: 12px;
             color: var(--text-muted);
-            margin-bottom: 4px;
-        }
-
-        .color-value {
-            font-size: 14px;
-            font-weight: 500;
-            font-family: 'JetBrains Mono', monospace;
+            margin-top: 4px;
         }
 
         .footer {
@@ -219,8 +230,16 @@
                 font-size: 28px;
             }
             
-            .color-info {
-                grid-template-columns: 1fr;
+            .rate-value {
+                font-size: 36px;
+            }
+            
+            .convert-input-group {
+                flex-direction: column;
+            }
+            
+            .convert-select {
+                width: 100%;
             }
         }
     </style>
@@ -228,120 +247,97 @@
 <body>
     <div class="container">
         <header class="header">
-            <div class="logo">🎨</div>
-            <h1 class="title">灰绿查询</h1>
-            <p class="subtitle">Gray-Green Color Query Tool</p>
+            <div class="logo">💱</div>
+            <h1 class="title">汇率查询</h1>
+            <p class="subtitle">人民币 CNY ⇄ 美元 USD</p>
         </header>
 
-        <div class="search-box">
-            <input type="text" class="search-input" id="searchInput" placeholder="输入颜色名称或 HEX 值，如：#6b8e6b 或 graygreen">
-            <button class="search-btn" onclick="searchColor()">查询</button>
+        <div class="rate-card">
+            <div class="rate-label">1 美元 =</div>
+            <div class="rate-value" id="rateValue">--.----</div>
+            <div class="rate-label">人民币 (CNY)</div>
+            <div class="rate-update" id="rateUpdate">加载中...</div>
         </div>
 
-        <div class="result-card" id="resultCard">
-            <div class="color-preview" id="colorPreview"></div>
-            <div class="color-info" id="colorInfo"></div>
+        <div class="convert-box">
+            <div class="convert-title">货币换算</div>
+            <div class="convert-input-group">
+                <input type="number" class="convert-input" id="amountInput" placeholder="输入金额">
+                <select class="convert-select" id="directionSelect">
+                    <option value="cny2usd">CNY → USD</option>
+                    <option value="usd2cny">USD → CNY</option>
+                </select>
+            </div>
+            <button class="convert-btn" onclick="convert()">换算</button>
+            <div class="convert-result" id="convertResult">
+                <div class="convert-result-value" id="convertValue">--</div>
+                <div class="convert-result-label" id="convertLabel">人民币</div>
+            </div>
         </div>
 
         <footer class="footer">
-            <p>灰绿查询工具 · Gray-Green Query Tool</p>
+            <p>汇率数据仅供参考 · 更新于 <span id="footerTime">--</span></p>
         </footer>
     </div>
 
     <script>
-        const colorDatabase = {
-            'graygreen': { hex: '#6b8e6b', rgb: '107, 142, 107', hsl: '120°, 14%, 49%', name: 'Gray Green' },
-            'darkseagreen': { hex: '#8fbc8f', rgb: '143, 188, 143', hsl: '120°, 25%, 65%', name: 'Dark Sea Green' },
-            'seagreen': { hex: '#2e8b57', rgb: '46, 139, 87', hsl: '150°, 50%, 36%', name: 'Sea Green' },
-            'mediumseagreen': { hex: '#3cb371', rgb: '60, 179, 113', hsl: '147°, 50%, 47%', name: 'Medium Sea Green' },
-            'lightseagreen': { hex: '#20b2aa', rgb: '32, 178, 170', hsl: '177°, 70%, 41%', name: 'Light Sea Green' },
-            'forestgreen': { hex: '#228b22', rgb: '34, 139, 34', hsl: '120°, 61%, 34%', name: 'Forest Green' },
-            'green': { hex: '#008000', rgb: '0, 128, 0', hsl: '120°, 100%, 25%', name: 'Green' },
-            'limegreen': { hex: '#32cd32', rgb: '50, 205, 50', hsl: '120°, 61%, 50%', name: 'Lime Green' },
-            'gray': { hex: '#808080', rgb: '128, 128, 128', hsl: '0°, 0%, 50%', name: 'Gray' },
-            'grey': { hex: '#808080', rgb: '128, 128, 128', hsl: '0°, 0%, 50%', name: 'Grey' },
-            'darkgray': { hex: '#a9a9a9', rgb: '169, 169, 169', hsl: '0°, 0%, 66%', name: 'Dark Gray' },
-            'darkgrey': { hex: '#a9a9a9', rgb: '169, 169, 169', hsl: '0°, 0%, 66%', name: 'Dark Grey' },
-            'lightgray': { hex: '#d3d3d3', rgb: '211, 211, 211', hsl: '0°, 0%, 83%', name: 'Light Gray' },
-            'lightgrey': { hex: '#d3d3d3', rgb: '211, 211, 211', hsl: '0°, 0%, 83%', name: 'Light Grey' },
-            'silver': { hex: '#c0c0c0', rgb: '192, 192, 192', hsl: '0°, 0%, 75%', name: 'Silver' },
-            'dimgray': { hex: '#696969', rgb: '105, 105, 105', hsl: '0°, 0%, 41%', name: 'Dim Gray' },
-            'dimgrey': { hex: '#696969', rgb: '105, 105, 105', hsl: '0°, 0%, 41%', name: 'Dim Grey' },
-            'slategray': { hex: '#708090', rgb: '112, 128, 144', hsl: '210°, 13%, 50%', name: 'Slate Gray' },
-            'slategrey': { hex: '#708090', rgb: '112, 128, 144', hsl: '210°, 13%, 50%', name: 'Slate Grey' },
-        };
+        let currentRate = 7.24; // 默认汇率
 
-        function searchColor() {
-            const input = document.getElementById('searchInput').value.toLowerCase().trim();
-            const resultCard = document.getElementById('resultCard');
-            const colorPreview = document.getElementById('colorPreview');
-            const colorInfo = document.getElementById('colorInfo');
+        // 模拟获取汇率（实际应该调用 API）
+        async function fetchRate() {
+            try {
+                // 这里可以用真实的汇率 API
+                // 暂时使用模拟数据
+                currentRate = 7.24 + (Math.random() * 0.02 - 0.01);
+                updateDisplay();
+            } catch (e) {
+                console.error('获取汇率失败', e);
+                document.getElementById('rateValue').textContent = '获取失败';
+                document.getElementById('rateUpdate').textContent = '请刷新页面重试';
+            }
+        }
 
-            if (!input) {
-                alert('请输入颜色名称或 HEX 值');
+        function updateDisplay() {
+            document.getElementById('rateValue').textContent = currentRate.toFixed(4);
+            document.getElementById('rateUpdate').textContent = '更新时间: ' + new Date().toLocaleString('zh-CN');
+            document.getElementById('footerTime').textContent = new Date().toLocaleString('zh-CN');
+        }
+
+        function convert() {
+            const amount = parseFloat(document.getElementById('amountInput').value);
+            const direction = document.getElementById('directionSelect').value;
+            const resultDiv = document.getElementById('convertResult');
+            const valueDiv = document.getElementById('convertValue');
+            const labelDiv = document.getElementById('convertLabel');
+
+            if (isNaN(amount) || amount <= 0) {
+                alert('请输入有效的金额');
                 return;
             }
 
-            let color = null;
-
-            // Check if it's a HEX code
-            if (input.startsWith('#')) {
-                // Search by hex
-                for (const key in colorDatabase) {
-                    if (colorDatabase[key].hex.toLowerCase() === input) {
-                        color = colorDatabase[key];
-                        break;
-                    }
-                }
+            let result;
+            if (direction === 'cny2usd') {
+                result = amount / currentRate;
+                valueDiv.textContent = '$' + result.toFixed(2);
+                labelDiv.textContent = '美元 (USD)';
             } else {
-                // Search by name
-                color = colorDatabase[input];
+                result = amount * currentRate;
+                valueDiv.textContent = '¥' + result.toFixed(2);
+                labelDiv.textContent = '人民币 (CNY)';
             }
 
-            if (color) {
-                resultCard.classList.add('show');
-                colorPreview.style.background = color.hex;
-                colorPreview.style.color = isLightColor(color.hex) ? '#000' : '#fff';
-                colorPreview.textContent = color.name;
-                
-                colorInfo.innerHTML = `
-                    <div class="color-item">
-                        <div class="color-label">HEX</div>
-                        <div class="color-value">${color.hex}</div>
-                    </div>
-                    <div class="color-item">
-                        <div class="color-label">RGB</div>
-                        <div class="color-value">${color.rgb}</div>
-                    </div>
-                    <div class="color-item">
-                        <div class="color-label">HSL</div>
-                        <div class="color-value">${color.hsl}</div>
-                    </div>
-                    <div class="color-item">
-                        <div class="color-label">名称</div>
-                        <div class="color-value">${color.name}</div>
-                    </div>
-                `;
-            } else {
-                resultCard.classList.remove('show');
-                alert('未找到该颜色，请尝试其他名称或 HEX 值');
-            }
+            resultDiv.classList.add('show');
         }
 
-        function isLightColor(hex) {
-            const r = parseInt(hex.slice(1, 3), 16);
-            const g = parseInt(hex.slice(3, 5), 16);
-            const b = parseInt(hex.slice(5, 7), 16);
-            const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-            return luminance > 0.5;
-        }
-
-        // Press Enter to search
-        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+        // 按 Enter 触发转换
+        document.getElementById('amountInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
-                searchColor();
+                convert();
             }
         });
+
+        // 页面加载时获取汇率
+        fetchRate();
     </script>
 </body>
 </html>
